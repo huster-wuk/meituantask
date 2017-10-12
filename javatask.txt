@@ -48,6 +48,7 @@ class CasinoOL //赌场类 存放玩家和庄家对象
 	{
 		Scanner in = new Scanner(System.in);
 		String choice = in.next();
+		boolean existA = false;
 		while(choice.equals("y") || choice.length() > 1)
 		{
 			//读入多个字符时重新读入
@@ -58,9 +59,20 @@ class CasinoOL //赌场类 存放玩家和庄家对象
 			}
 			Poker pok = getpok(getnub(), getclr()); //生成一个扑克对象
 			
-			//记录牌值，判断是否是“J” “Q” “K”
+			//记录牌值，判断是否是"J" "Q" "K" "A"
 			int tmp = pok.nub();
-			if(tmp > 10)
+			if(tmp == 1)
+			{
+				existA = true;
+				if(k == 0)
+					player += 1;
+				else
+					player += 1;
+				System.out.println("OK");
+				System.out.println("You got a : " + pok.color() + " " + "A");
+				System.out.println("");
+			}
+			else if(tmp > 10)
 			{
 				if(k == 0)
 					player += 10;
@@ -97,6 +109,7 @@ class CasinoOL //赌场类 存放玩家和庄家对象
 		
 		if(choice.equals("n"))
 			System.out.println("Not bad");
+		addup(existA, k);
 		if(choice.equals("q"))
 		{
 			System.out.println("Bye");
@@ -141,12 +154,20 @@ class CasinoOL //赌场类 存放玩家和庄家对象
 		return banker;
 	}
 	
-	public String translate(int t) //将10以上的牌值转换为“J” “Q” “K”
+	public String translate(int t) //将10以上的牌值转换为"J" "Q" "K"
 	{
 		if(t == 11) return "J";
 		if(t == 12) return "Q";
 		if(t == 13) return "K";
 		return "0";
+	}
+	
+	public void addup(boolean flag, int t) //如果A能取11就取11
+	{
+		if(flag && t == 0 && player <= 11)
+			player += 10;
+		if(flag && t && banker <= 11)
+			banker += 10;
 	}
 }
 

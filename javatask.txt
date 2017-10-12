@@ -1,0 +1,174 @@
+/***************************************************************************
+							澳门线上赌场
+****************************************************************************/
+
+import java.util.*;
+import java.lang.Math.*;
+
+public class Game //游戏类（主类）
+{
+	public static void main(String args[])
+	{
+		CasinoOL aCasino = new CasinoOL(0, 0); //生成一个赌场，即开始一局游戏
+
+		System.out.println("Now it's your turn:");
+		aCasino.play(0);   //玩家操作
+		
+		System.out.println("====================");
+
+		System.out.println("Now it's banker's turn:");
+		aCasino.play(1);   //庄家操作
+		
+		//最后比较结果
+		if(aCasino.getpla() > aCasino.getban())
+			System.out.println("You win");
+		else if(aCasino.getban() > aCasino.getpla())
+			System.out.println("You lose");
+		if(aCasino.getban() == aCasino.getpla())
+			System.out.println("Push");
+	}
+}
+
+class CasinoOL //赌场类 存放玩家和庄家对象
+{	
+	//玩家和庄家牌值初始化为0
+	private int player = 0;
+	private int banker = 0; 
+	//标记一张牌是否被用过
+	private boolean[][] used = new boolean[15][6];
+	
+	
+	public CasinoOL(int player, int banker) //构造器 构造一个赌场类对象
+	{
+		this.player = player;
+		this.banker = banker;
+	}
+	
+	public void play(int k)
+	{
+		Scanner in = new Scanner(System.in);
+		String choice = in.next();
+		while(choice.equals("y") || choice.length() > 1)
+		{
+			//读入多个字符时重新读入
+			if(choice.length() > 1)  
+			{
+				choice = in.next();
+				continue;
+			}
+			Poker pok = getpok(getnub(), getclr()); //生成一个扑克对象
+			
+			//记录牌值，判断是否是“J” “Q” “K”
+			int tmp = pok.nub();
+			if(tmp > 10)
+			{
+				if(k == 0)
+					player += 10;
+				else
+					banker += 10;
+				System.out.println("OK");
+				System.out.println("You got a : " + pok.color() + " " + translate(tmp));
+				System.out.println("");
+			}
+			else
+			{
+				if(k == 0)
+					player += tmp;
+				else
+					banker += tmp;
+				System.out.println("OK");
+				System.out.println("You got a : " + pok.color() + " " + pok.nub());
+				System.out.println("");
+			}
+			
+			//爆牌判定
+			if(player > 21)
+			{
+				System.out.println("You lose");
+				System.exit(0);
+			}
+			if(banker > 21)
+			{
+				System.out.println("You win");
+				System.exit(0);
+			}
+			choice = in.next();
+		}
+		
+		if(choice.equals("n"))
+			System.out.println("Not bad");
+		if(choice.equals("q"))
+		{
+			System.out.println("Bye");
+			System.exit(0);
+		}
+	}
+	
+	String[] color = {"0", "Spade", "Heart", "Club", "Diamond"};//定义一个花色表
+	
+	public int getnub() //获得牌值随机数
+	{
+		int nub = (int)(1+Math.random()*(13-1+1));
+		return nub;
+	}
+	
+	public int getclr() //获得花色随机数
+	{
+		int clr = (int)(1+Math.random()*(4-1+1));
+		return clr;
+	}
+	
+	public Poker getpok(int anub, int aclr) //生成一张未使用过的扑克
+	{
+		while(used[anub][aclr] == true) //使用判定
+		{
+			anub = getnub();
+			aclr = getclr();
+		}
+		
+		Poker aPoker = new Poker(anub, color[aclr]); //用对应的牌值和花色构造一个扑克对象
+		used[anub][aclr] = true; //标记此扑克已被使用
+		return aPoker;
+	}
+	
+	public int getpla() //返回玩家牌值
+	{
+		return player;
+	}
+	
+	public int getban() //返回庄家牌值
+	{
+		return banker;
+	}
+	
+	public String translate(int t) //将10以上的牌值转换为“J” “Q” “K”
+	{
+		if(t == 11) return "J";
+		if(t == 12) return "Q";
+		if(t == 13) return "K";
+		return "0";
+	}
+}
+
+//扑克类，存放牌值域和花色域
+class Poker 
+{
+	private int nub;
+	private String color;
+	
+	public Poker(int nub, String color) //构造器
+	{
+		this.nub = nub;
+		this.color = color;
+	}
+	
+	public int nub()
+	{
+		return nub;
+	}
+	
+	public String color()
+	{
+		return color;
+	}
+}

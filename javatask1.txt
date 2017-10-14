@@ -1,0 +1,195 @@
+/***************************************************************************
+							   澳门线上赌场
+****************************************************************************/
+
+import java.util.*;
+import java.lang.Math.*;
+
+public class Game
+{
+	public static void main(String args[])
+	{
+		CasinoOL aCasino = new CasinoOL(0, 0);
+
+		System.out.println("Now it's your turn:");
+		aCasino.play(0);
+		
+		System.out.println("====================");
+
+		System.out.println("Now it's banker's turn:");
+		aCasino.play(1);
+		
+		if(aCasino.getpla() > aCasino.getban())
+			System.out.println("You win");
+		else if(aCasino.getban() > aCasino.getpla())
+			System.out.println("You lose");
+		if(aCasino.getban() == aCasino.getpla())
+			System.out.println("Push");
+	}
+}
+
+class CasinoOL
+{
+	private int player = 0;
+	private int banker = 0; 
+	private boolean[][] used = new boolean[15][6];
+	
+	
+	public CasinoOL(int player, int banker)
+	{
+		this.player = player;
+		this.banker = banker;
+	}
+	
+	public void play(int k)
+	{
+		Scanner in = new Scanner(System.in);
+		String choice = in.next();
+		boolean existA = false;
+		while(choice.equals("y") || choice.length() > 1)
+		{
+			if(choice.length() > 1)  
+			{
+				System.out.println("please choose again");
+				choice = in.next();
+				continue;
+			}
+			Poker pok = getpok(getnub(), getclr());
+			
+			System.out.println("OK");
+			
+			int tmp = pok.nub();
+			if(tmp == 1)
+			{
+				existA = true;
+				if(k == 0)
+					player += 1;
+				else
+					banker += 1;
+				System.out.println("You got a : " + pok.color() + " " + "A");
+			}
+			else if(tmp > 10)
+			{
+				if(k == 0)
+					player += 10;
+				else
+					banker += 10;
+				System.out.println("You got a : " + pok.color() + " " + translate(tmp));
+			}
+			else
+			{
+				if(k == 0)
+					player += tmp;
+				else
+					banker += tmp;
+				System.out.println("You got a : " + pok.color() + " " + pok.nub());
+			}
+			
+			if(k == 0)
+				System.out.println("player = " + player);
+			else
+				System.out.println("banker = " + banker);
+			
+			System.out.println("");
+			
+			if(player > 21)
+			{
+				System.out.println("You lose");
+				System.exit(0);
+			}
+			if(banker > 21)
+			{
+				System.out.println("You win");
+				System.exit(0);
+			}
+		
+			choice = in.next();
+		}
+		
+		if(choice.equals("n"))
+			System.out.println("Not bad");
+		
+		addup(existA, k);
+		
+		if(choice.equals("q"))
+		{
+			System.out.println("Bye");
+			System.exit(0);
+		}
+	}
+	
+	String[] color = {"0", "Spade", "Heart", "Club", "Diamond"};
+	
+	public int getnub()
+	{
+		int nub = (int)(1 + Math.random() * 13);
+		return nub;
+	}
+	
+	public int getclr()
+	{
+		int clr = (int)(1 + Math.random( )* 4);
+		return clr;
+	}
+	
+	public Poker getpok(int anub, int aclr)
+	{
+		while(used[anub][aclr] == true)
+		{
+			anub = getnub();
+			aclr = getclr();
+		}
+		
+		Poker aPoker = new Poker(anub, color[aclr]);
+		used[anub][aclr] = true;
+		return aPoker;
+	}
+	
+	public int getpla()
+	{
+		return player;
+	}
+	
+	public int getban()
+	{
+		return banker;
+	}
+	
+	public String translate(int t)
+	{
+		if(t == 11) return "J";
+		if(t == 12) return "Q";
+		if(t == 13) return "K";
+		return "0";
+	}
+	
+	public void addup(boolean flag, int t)
+	{
+		if(flag && t == 0 && player <= 11)
+			player += 10;
+		if(flag && t == 1 && banker <= 11)
+			banker += 10;
+	}
+}
+
+class Poker 
+{
+	private int nub;
+	private String color;
+	
+	public Poker(int nub, String color)
+	{
+		this.nub = nub;
+		this.color = color;
+	}
+	
+	public int nub()
+	{
+		return nub;
+	}
+	
+	public String color()
+	{
+		return color;
+	}
+}

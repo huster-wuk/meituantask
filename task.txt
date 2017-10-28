@@ -4,7 +4,6 @@
 #include <iostream>
 using namespace std;
 
-//随机抽出一张牌并标记牌数 
 int card[15];
 
 int getnub()
